@@ -37,10 +37,6 @@ export const ToastProvider = ({
   const globalContext = useProviderContext();
   const disableAnimation = disableAnimationProp ?? globalContext?.disableAnimation ?? false;
 
-  if (toastQueue.visibleToasts.length == 0) {
-    return null;
-  }
-
   return (
     <ToastRegion
       disableAnimation={disableAnimation}

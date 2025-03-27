@@ -1,5 +1,5 @@
 import * as React from "react";
-import {render, screen} from "@testing-library/react";
+import {render, screen, waitFor} from "@testing-library/react";
 import userEvent, {UserEvent} from "@testing-library/user-event";
 
 import {addToast, ToastProvider} from "../src";
@@ -96,7 +96,7 @@ describe("Toast", () => {
       <>
         <ToastProvider />
         <button
-          data-testid="button"
+          data-testid="show-toast-button"
           onClick={() => {
             addToast({
               title: title,
@@ -109,19 +109,28 @@ describe("Toast", () => {
       </>,
     );
 
-    const button = wrapper.getByTestId("button");
+    await user.click(wrapper.getByTestId("show-toast-button"));
 
-    await user.click(button);
+    const region = screen.getByRole("region");
+    const regionChild = region.querySelector("div");
 
-    const initialCloseButtons = wrapper.getAllByRole("button");
-    const initialButtonLength = initialCloseButtons.length;
+    await waitFor(() => {
+      expect(regionChild).toHaveStyle("opacity: 1");
+    });
 
-    await user.click(initialCloseButtons[0]);
+    expect(region).toHaveAttribute("aria-label", "2 notifications.");
 
-    const finalCloseButtons = wrapper.getAllByRole("button");
-    const finalButtonLength = finalCloseButtons.length;
+    const closeButtons = wrapper.getAllByLabelText("Close")[0];
 
-    expect(initialButtonLength).toEqual(finalButtonLength + 1);
+    await user.click(closeButtons);
+
+    await waitFor(() => {
+      expect(region).toHaveAttribute("aria-label", "1 notification.");
+    });
+
+    await waitFor(() => {
+      expect(regionChild).toHaveStyle("opacity: 0");
+    });
   });
 
   it("should work with placement", async () => {

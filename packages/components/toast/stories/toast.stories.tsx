@@ -17,6 +17,11 @@ import {Toast, ToastProps, ToastProvider, addToast, closeAll} from "../src";
 export default {
   title: "Components/Toast",
   component: Toast,
+  args: {
+    motionProps: {
+      exit: {opacity: 0, y: -300, x: -500, transition: {duration: 1, ease: "easeInOut"}},
+    },
+  },
   argTypes: {
     variant: {
       control: {type: "select"},
@@ -66,10 +71,14 @@ export default {
         type: "boolean",
       },
     },
+    motionProps: {
+      control: "object",
+      description: "Custom properties for Framer Motion",
+    },
   },
   decorators: [
     (Story) => (
-      <div className="flex justify-start items-start w-screen h-screen">
+      <div className="flex justify-start items-start w-screen h-[50vh]">
         <Story />
       </div>
     ),
